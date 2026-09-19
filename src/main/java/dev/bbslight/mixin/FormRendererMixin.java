@@ -12,4 +12,7 @@ abstract class FormRendererMixin {
     @Inject(method="render(Lmchorse/bbs_mod/forms/renderers/FormRenderingContext;)V",
         at=@At(value="INVOKE",target="Lmchorse/bbs_mod/forms/renderers/FormRenderer;render3D(Lmchorse/bbs_mod/forms/renderers/FormRenderingContext;)V"),remap=false)
     private void bbsLight$prepare(@Coerce Object context,CallbackInfo ci) { FormBridge.prepare(this,context); }
+    @Inject(method="render(Lmchorse/bbs_mod/forms/renderers/FormRenderingContext;)V",
+        at=@At(value="INVOKE",target="Lmchorse/bbs_mod/forms/renderers/FormRenderer;render3D(Lmchorse/bbs_mod/forms/renderers/FormRenderingContext;)V",shift=At.Shift.AFTER),remap=false)
+    private void bbsLight$finish(@Coerce Object context,CallbackInfo ci) { FormBridge.finish(); }
 }

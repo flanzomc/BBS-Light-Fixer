@@ -16,11 +16,11 @@ public final class Lights {
     private static Map<Key, Source> applied = Map.of();
     private static volatile List<Source> snapshot = List.of();
     private static final LinkedHashSet<Section> dirty = new LinkedHashSet<>();
-    private static Matrix4f inverseView;
     private static Vec3d camera;
     private static boolean collecting;
     private static Object world;
     private static int ticks;
+    private static long frameNumber, publishedFrame = -1;
     private static final int MAX_LIGHTS = 64, MAX_DIRTY = 8192;
     private static final class Key {
         final Object form, entity;
@@ -32,23 +32,30 @@ public final class Lights {
     public static int count() { return snapshot.size(); }
     public static void begin(MatrixStack matrices, Vec3d position) {
         frame.clear();
-        collecting = LightFixer.enabled && matrices != null;
-        if (collecting) { inverseView = new Matrix4f(matrices.peek().getPositionMatrix()).invert(); camera = position; }
+        collecting = LightFixer.enabled;
+        camera = position;
     }
     public static void capture(Object form, Object entity, MatrixStack stack, int level) {
-        if (!collecting || level == 0 || frame.size() >= MAX_LIGHTS) return;
-        Vector3f p = new Matrix4f(inverseView).mul(stack.peek().getPositionMatrix()).getTranslation(new Vector3f());
-        if (!Float.isFinite(p.x) || !Float.isFinite(p.y) || !Float.isFinite(p.z) || p.lengthSquared() > 128*128) return;
-        frame.put(new Key(form, entity), new Source(camera.x+p.x, camera.y+p.y, camera.z+p.z, level));
+        if (!collecting || stack == null || level == 0 || frame.size() >= MAX_LIGHTS) return;
+        // BBS context.world already includes entity, form and animated parent-bone transforms.
+        Vector3f p = stack.peek().getPositionMatrix().getTranslation(new Vector3f());
+        if (!Float.isFinite(p.x) || !Float.isFinite(p.y) || !Float.isFinite(p.z) || camera.squaredDistanceTo(p.x,p.y,p.z) > 128*128) return;
+        frame.put(new Key(form, entity), new Source(p.x,p.y,p.z,level));
     }
-    public static void end() { collecting = false; }
+    public static void end() { collecting = false; frameNumber++; }
+    public static String diagnostic() {
+        if(snapshot.isEmpty()) return "No captured sources.";
+        Source s=snapshot.get(0);
+        return String.format(java.util.Locale.ROOT,"First source: %.2f, %.2f, %.2f; level %d",s.x,s.y,s.z,s.level);
+    }
     public static void tick(MinecraftClient client) {
         if (client.world != world) {
             world = client.world; frame.clear(); applied = Map.of(); snapshot = List.of(); dirty.clear(); collecting=false;
         }
         if (client.world == null) return;
         // 10 Hz publication avoids rebuilding terrain on every video frame.
-        if (++ticks % 2 == 0) {
+        if (++ticks % 2 == 0 && publishedFrame != frameNumber) {
+            publishedFrame = frameNumber;
             Map<Key, Source> next = LightFixer.enabled ? new HashMap<>(frame) : Map.of();
             for (var e : applied.entrySet()) {
                 Source n = next.get(e.getKey()), old=e.getValue();
@@ -57,7 +64,6 @@ public final class Lights {
             }
             for (var e : next.entrySet()) if (!applied.containsKey(e.getKey())) invalidate(e.getValue());
             applied=next; snapshot=List.copyOf(next.values());
-            frame.clear();
         }
         // Fixed upper budget, including old positions so moved/deleted lights do not leave ghosts.
         var it=dirty.iterator();

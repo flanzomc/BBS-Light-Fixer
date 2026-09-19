@@ -11,8 +11,12 @@ public final class FormBridge {
     private static final ConcurrentHashMap<Member, Field> FIELDS=new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<Class<?>, Method> GETTERS=new ConcurrentHashMap<>();
     private static boolean warned;
+    private static final ThreadLocal<java.util.Deque<Boolean>> GLOW = ThreadLocal.withInitial(java.util.ArrayDeque::new);
+    public static boolean glowing() { return !GLOW.get().isEmpty() && GLOW.get().peek(); }
+    public static void finish() { if(!GLOW.get().isEmpty()) GLOW.get().pop(); }
     private FormBridge() {}
     public static void prepare(Object renderer, Object context) {
+        GLOW.get().push(false);
         if(!LightFixer.enabled) return;
         try {
             Object form=field(renderer,"form");
@@ -21,9 +25,12 @@ public final class FormBridge {
             LightSpec spec=LightSpec.parse(String.valueOf(get.invoke(name)));
             if(spec.level()==0 && !spec.glow()) return;
             if(field(context,"stencilMap")!=null) return;
-            if(spec.glow()) lookup(context.getClass(),"light").setInt(context,0x00f000f0);
+            if(spec.glow()) {
+                lookup(context.getClass(),"light").setInt(context,0x00f000f0);
+                GLOW.get().pop(); GLOW.get().push(true);
+            }
             if(!Boolean.TRUE.equals(field(context,"ui")))
-                Lights.capture(form,field(context,"entity"),(MatrixStack)field(context,"stack"),spec.level());
+                Lights.capture(form,field(context,"entity"),(MatrixStack)field(context,"world"),spec.level());
         } catch(ReflectiveOperationException | RuntimeException e) {
             if(!warned) { warned=true; LoggerFactory.getLogger("BBS Light Fixer").warn("BBS form lighting hook is incompatible with this build",e); }
         }

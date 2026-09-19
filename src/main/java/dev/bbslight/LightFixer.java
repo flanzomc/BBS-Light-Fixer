@@ -17,6 +17,7 @@ public final class LightFixer implements ClientModInitializer {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, access) -> dispatcher.register(literal("bbslight")
             .executes(c -> {
                 c.getSource().sendFeedback(Text.literal("BBS Light Fixer: " + (enabled ? "ON" : "OFF") + "; " + Lights.count() + " active lights. Name a form: Torch [light=15] [glow]. /bbslight toggle"));
+                c.getSource().sendFeedback(Text.literal(Lights.diagnostic()));
                 return 1;
             })
             .then(literal("toggle").executes(c -> {
