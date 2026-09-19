@@ -1,0 +1,11 @@
+{
+ "schemaVersion": 1,
+ "id": "bbs_light_fixer",
+ "version": "${version}",
+ "name": "BBS Light Fixer",
+ "description": "Experimental shader-pack-free lighting for animated BBS forms.",
+ "environment": "client",
+ "entrypoints": {"client": ["dev.bbslight.LightFixer"]},
+ "mixins": ["bbs_light_fixer.mixins.json"],
+ "depends": {"fabricloader": ">=0.16.14", "minecraft": "~1.20.4", "java": ">=17", "fabric-api": "*", "bbs": ">=2.5.2"}
+}
