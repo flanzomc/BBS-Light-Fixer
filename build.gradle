@@ -22,3 +22,7 @@ tasks.withType(JavaCompile).configureEach { options.release=17 }
 processResources { inputs.property 'version',project.version; filesMatching('fabric.mod.json') { expand 'version':project.version } }
 test { useJUnitPlatform() }
 loom { runs { client { if (project.hasProperty('smokeTest')) vmArg '-DbbsLight.selfTest=true' } } }
+tasks.register('productionSmoke', net.fabricmc.loom.task.prod.ClientProductionRunTask) {
+ jvmArgs.addAll('-DbbsLight.selfTest=true', '-Djava.awt.headless=true')
+ mods.from(configurations.modImplementation)
+}

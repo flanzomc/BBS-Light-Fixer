@@ -18,7 +18,7 @@ jobs:
       - name: Client startup smoke test
         run: |
           set +e
-          timeout 240s xvfb-run -a gradle runClient -PsmokeTest --console=plain > client-startup.log 2>&1
+          timeout 240s gradle productionSmoke --console=plain > client-startup.log 2>&1
           result=$?
           cat client-startup.log
           if [ "$result" != 0 ]; then exit 1; fi
