@@ -1,37 +1,17 @@
-# BBS Light Fixer — experimental alpha.5
+# BBS Light Fixer — CML feature port
 
-Alpha.5 adds BBS lights to client-world block-light provider reads used by terrain lighting, including direct reads outside the packed-light renderer helper. Ground and walls use distance falloff. Placed model-block sources remain active after being seen once, even when the model goes off-screen; re-rendering an edited model replaces its sources, and removal or chunk unload clears them. The server world, skylight storage, and saved blocks are untouched.
+Fabric 1.20.4, BBS FS 2.5.2. This replaces the old display-name tags and commands with saved form properties.
 
-Alpha.4 anchors placed model-block lights to the real block renderer instead of BBS's zero-position placeholder entity. Local form and animated bone transforms are retained. Tagged block forms use an immediate cutout emissive pass so BBS's translucent queue cannot defer their glow draw. Terrain rebuilds schedule each affected section once instead of walking every block in it.
+Requires Fabric API and LambDynamicLights **2.3.4+1.20.4** in the mods folder. Enable dynamic lighting in LambDynamicLights settings. No external shader pack is required.
 
-Replace the older addon JAR, then use `Torch [light=15] [glow]` in the form's display name. `/bbslight` reports the first source's world coordinates for comparison with the placed model. This fix targets vanilla rendering on Fabric 1.20.4; compilation and coordinate regression tests do not replace an in-game visual test.
+Model and Block form editors gain Color extras (glow and paint), Color grade (brightness, contrast, saturation and hue), and per-channel effect transforms. Block forms gain emission enable/intensity and breaking stage (0 off, 1–10 cracks). Block light follows CML: capped by the underlying block luminance, so a torch can emit but ordinary stone cannot. Glow adjusts the surface; it is not bloom or colored world lighting. World light uses LambDynamicLights' radius and terrain update behavior.
 
-Fabric **1.20.4**, BBS FS **2.5.2** API baseline. Requires Fabric API. No shader pack or Iris is required. Newer BBS FS releases are not yet runtime-verified. This is NOT a CML build.
+The values are stored under cml_effects in FS forms. They are not a CML form file converter. Old name tags no longer configure this replacement.
 
-## Use
+## Source and attribution
 
-In the BBS form editor, put tags in the form's **name**:
+Color processing and effect-mask formulas are adapted from [BBS-CML](https://github.com/ElGatoPro300/BBS-CML), commit 06f0e53172aadb1fd2a201b03226c9cb59f135e5, MIT, Copyright 2025 McHorse / Copyright 2026 ElGatoPro300. Full license ships in META-INF/licenses/BBS-CML.txt. World lighting is provided by LambDynamicLights, not bundled/copied.
 
-- `Torch [light=15] [glow]`: bright form plus a moving light.
-- `Lamp [light=10]`: nearby illumination without making the form fullbright.
-- `Flame [glow]`: fullbright form only.
-- `Lamp [light=0]`: no emitted light.
+## Validation and scope
 
-For a flame/eyes-only glow, use a separate child form containing those parts. Attach the child to the desired model bone with BBS's existing body-part tools. The addon samples the transformed child position, including its animated transform. Use existing BBS visibility animation to switch the source off (invisible forms do not emit). Name tags persist with saved forms; no commands are needed to restore them.
-
-`/bbslight` shows status; `/bbslight toggle` disables/enables the addon for the current session.
-
-## What is implemented
-
-Fullbright tagged forms and client-side vanilla lightmap illumination for terrain and renderers that use vanilla lightmap sampling. Moving/deleted sources invalidate their old terrain sections. No blocks are placed or altered. Up to 64 rendered sources, 128-block capture distance, 10 Hz updates, bounded terrain rebuild queue. Immutable light snapshots are safe for chunk worker reads.
-
-## Important alpha limitations
-
-- No bloom, colored lighting, shadows, or per-pixel `_e.png` masks yet. Fullbright is not bloom.
-- Light can pass through walls; this is distance-based visual illumination, not Minecraft's server light propagation.
-- Sources are initially discovered while BBS renders their forms. Placed model-block lights remain active off-screen after discovery; culled actor/body-part lights may stop emitting. Off-screen animated model-block positions update when rendered again. Terrain changes have rebuild latency.
-- Sodium and shader-pack pipelines are not supported/verified by this first vanilla-renderer build.
-- GUI thumbnails are not world light sources. Fullbright applies where BBS calls the common form renderer; standalone preview paths may differ.
-- No in-game client test is possible in CI; compilation/unit tests are not proof of visual correctness. Test in a copy of a scene first.
-
-The earlier design includes selective emissive textures, bloom and broader renderer compatibility; this alpha does not claim those features are complete.
+Experimental port. Compile/build checks do not replace Minecraft visual testing. Current render support is BBS model VAO geometry and ordinary baked Block forms with the vanilla renderer. Fluid/block-entity renderers and Iris shader-pack overlays need separate integration. Future FS versions are not automatically guaranteed compatible with these mixins.

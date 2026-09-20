@@ -1,7 +1,19 @@
 {
- "required": true,
- "package": "dev.bbslight.mixin",
- "compatibilityLevel": "JAVA_17",
- "client": ["FormRendererMixin", "WorldRendererMixin", "BlockRenderManagerMixin", "ModelBlockRendererMixin", "FormBufferMixin", "ChunkLightProviderMixin"],
- "injectors": {"defaultRequire": 1}
+  "required": true,
+  "package": "dev.bbslight.cml.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "FormDataMixin",
+    "PanelMixin",
+    "FormDrawMixin",
+    "ModelShaderMixin",
+    "BlockLayerMixin",
+    "ShaderUniformMixin",
+    "ModelBlockMixin",
+    "DeferredEffectsMixin",
+    "BreakingMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

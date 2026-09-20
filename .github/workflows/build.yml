@@ -17,6 +17,6 @@ jobs:
       - run: gradle build --console=plain
       - uses: actions/upload-artifact@v4
         with:
-          name: bbs-light-fixer-0.1.0-alpha.5
-          path: build/libs/bbs-light-fixer-0.1.0-alpha.5.jar
+          name: bbs-light-fixer-0.2.0-alpha.1
+          path: build/libs/bbs-light-fixer-0.2.0-alpha.1.jar
           if-no-files-found: error
