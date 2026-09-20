@@ -179,7 +179,7 @@
       ]
     },
     {
-      "name": "FormColorGrade",
+      "name": "PaintColor",
       "type": "float",
       "count": 4,
       "values": [
@@ -201,7 +201,34 @@
       ]
     },
     {
-      "name": "PaintColor",
+      "name": "GlowPaintOnly",
+      "type": "float",
+      "count": 1,
+      "values": [
+        0
+      ]
+    },
+    {
+      "name": "FormColorTint",
+      "type": "float",
+      "count": 4,
+      "values": [
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "ColorTintMasked",
+      "type": "float",
+      "count": 1,
+      "values": [
+        0
+      ]
+    },
+    {
+      "name": "FormColorGrade",
       "type": "float",
       "count": 4,
       "values": [
@@ -212,7 +239,7 @@
       ]
     },
     {
-      "name": "RootInverse",
+      "name": "FormRootInverse",
       "type": "matrix4x4",
       "count": 16,
       "values": [
@@ -235,7 +262,7 @@
       ]
     },
     {
-      "name": "GlowInverse",
+      "name": "PaintEffectInverse",
       "type": "matrix4x4",
       "count": 16,
       "values": [
@@ -258,7 +285,7 @@
       ]
     },
     {
-      "name": "GlowActive",
+      "name": "PaintEffectActive",
       "type": "float",
       "count": 1,
       "values": [
@@ -266,7 +293,25 @@
       ]
     },
     {
-      "name": "GlowShape",
+      "name": "PaintMaskHalf",
+      "type": "float",
+      "count": 3,
+      "values": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "PaintMaskBottomAnchored",
+      "type": "float",
+      "count": 1,
+      "values": [
+        1
+      ]
+    },
+    {
+      "name": "PaintMaskShape",
       "type": "float",
       "count": 1,
       "values": [
@@ -274,7 +319,7 @@
       ]
     },
     {
-      "name": "PaintInverse",
+      "name": "GlowEffectInverse",
       "type": "matrix4x4",
       "count": 16,
       "values": [
@@ -297,7 +342,7 @@
       ]
     },
     {
-      "name": "PaintActive",
+      "name": "GlowEffectActive",
       "type": "float",
       "count": 1,
       "values": [
@@ -305,7 +350,82 @@
       ]
     },
     {
-      "name": "PaintShape",
+      "name": "GlowMaskHalf",
+      "type": "float",
+      "count": 3,
+      "values": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "GlowMaskBottomAnchored",
+      "type": "float",
+      "count": 1,
+      "values": [
+        1
+      ]
+    },
+    {
+      "name": "GlowMaskShape",
+      "type": "float",
+      "count": 1,
+      "values": [
+        0
+      ]
+    },
+    {
+      "name": "ColorEffectInverse",
+      "type": "matrix4x4",
+      "count": 16,
+      "values": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "ColorEffectActive",
+      "type": "float",
+      "count": 1,
+      "values": [
+        0
+      ]
+    },
+    {
+      "name": "ColorMaskHalf",
+      "type": "float",
+      "count": 3,
+      "values": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "ColorMaskBottomAnchored",
+      "type": "float",
+      "count": 1,
+      "values": [
+        1
+      ]
+    },
+    {
+      "name": "ColorMaskShape",
       "type": "float",
       "count": 1,
       "values": [
@@ -341,6 +461,24 @@
       "count": 1,
       "values": [
         0
+      ]
+    },
+    {
+      "name": "GradeBrightnessHalf",
+      "type": "float",
+      "count": 3,
+      "values": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "GradeBrightnessBottomAnchored",
+      "type": "float",
+      "count": 1,
+      "values": [
+        1
       ]
     },
     {
@@ -383,46 +521,25 @@
       ]
     },
     {
-      "name": "GradeContrastShape",
+      "name": "GradeContrastHalf",
       "type": "float",
-      "count": 1,
-      "values": [
-        0
-      ]
-    },
-    {
-      "name": "GradeSaturationInverse",
-      "type": "matrix4x4",
-      "count": 16,
+      "count": 3,
       "values": [
         1,
-        0,
-        0,
-        0,
-        0,
         1,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
         1
       ]
     },
     {
-      "name": "GradeSaturationActive",
+      "name": "GradeContrastBottomAnchored",
       "type": "float",
       "count": 1,
       "values": [
-        0
+        1
       ]
     },
     {
-      "name": "GradeSaturationShape",
+      "name": "GradeContrastShape",
       "type": "float",
       "count": 1,
       "values": [
@@ -461,7 +578,82 @@
       ]
     },
     {
+      "name": "GradeHueHalf",
+      "type": "float",
+      "count": 3,
+      "values": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "GradeHueBottomAnchored",
+      "type": "float",
+      "count": 1,
+      "values": [
+        1
+      ]
+    },
+    {
       "name": "GradeHueShape",
+      "type": "float",
+      "count": 1,
+      "values": [
+        0
+      ]
+    },
+    {
+      "name": "GradeSaturationInverse",
+      "type": "matrix4x4",
+      "count": 16,
+      "values": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "GradeSaturationActive",
+      "type": "float",
+      "count": 1,
+      "values": [
+        0
+      ]
+    },
+    {
+      "name": "GradeSaturationHalf",
+      "type": "float",
+      "count": 3,
+      "values": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "GradeSaturationBottomAnchored",
+      "type": "float",
+      "count": 1,
+      "values": [
+        1
+      ]
+    },
+    {
+      "name": "GradeSaturationShape",
       "type": "float",
       "count": 1,
       "values": [

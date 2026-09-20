@@ -22,8 +22,8 @@ jobs:
           result=$?
           cat client-startup.log
           if [ "$result" != 0 ]; then exit 1; fi
-          if grep -E 'MixinApplyError|InvalidInjectionException|InjectionError|Failed to load shader|Could not compile shader|Unhandled game exception' client-startup.log; then exit 1; fi
-          grep 'BBS LIGHT PORT STARTUP CHECK PASSED' client-startup.log
+          if grep -E 'MixinApplyError|InvalidInjectionException|InjectionError|Failed to load shader|Could not compile shader|Unhandled game exception|clean CML port self-test failed' client-startup.log; then exit 1; fi
+          grep 'BBS LIGHT FIXER CLEAN CML PORT STARTUP CHECK PASSED' client-startup.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -31,6 +31,6 @@ jobs:
           path: client-startup.log
       - uses: actions/upload-artifact@v4
         with:
-          name: bbs-light-fixer-0.2.0-alpha.3
-          path: build/libs/bbs-light-fixer-0.2.0-alpha.3.jar
+          name: bbs-light-fixer-0.3.0-alpha.1
+          path: build/libs/bbs-light-fixer-0.3.0-alpha.1.jar
           if-no-files-found: error
