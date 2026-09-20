@@ -17,3 +17,4 @@ java { toolchain { languageVersion=JavaLanguageVersion.of(21) }; withSourcesJar(
 tasks.withType(JavaCompile).configureEach { options.release=17 }
 processResources { inputs.property 'version',project.version; filesMatching('fabric.mod.json') { expand 'version':project.version } }
 test { useJUnitPlatform() }
+loom { runs { client { if (project.hasProperty('smokeTest')) vmArg '-DbbsLight.selfTest=true' } } }
