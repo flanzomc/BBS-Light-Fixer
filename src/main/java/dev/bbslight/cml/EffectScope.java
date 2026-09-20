@@ -35,6 +35,8 @@ public final class EffectScope {
     public static void uniforms(ShaderProgram shader) {
         if(shader!=PortShaders.model && shader!=PortShaders.block)return;
         State s=current();
+        // Buffered block/non-VAO vertices already have their normals transformed.
+        if(shader==PortShaders.block)shader.getUniform("NormalMat").set(new org.joml.Matrix3f());
         shader.getUniform("FormColorGrade").set(s.grade);
         shader.getUniform("GlowingColor").set(s.glow);
         shader.getUniform("PaintColor").set(s.paint);
