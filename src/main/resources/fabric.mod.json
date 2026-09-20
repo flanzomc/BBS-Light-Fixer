@@ -3,9 +3,10 @@
   "id": "bbs_light_fixer",
   "version": "${version}",
   "name": "BBS Light Fixer",
-  "description": "Clean BBS-CML form effects and block-light port for BBS FS.",
-  "environment": "client",
+  "description": "BBS-CML glow, paint, color-grade and lighting backport for BBS FS.",
+  "environment": "*",
   "entrypoints": {
+    "main": ["dev.flanzomc.bbslightfixer.BbsLightFixerCommon"],
     "client": ["dev.flanzomc.bbslightfixer.BbsLightFixer"]
   },
   "mixins": ["bbs_light_fixer.mixins.json"],

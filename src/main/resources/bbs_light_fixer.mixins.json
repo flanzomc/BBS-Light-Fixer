@@ -2,8 +2,16 @@
   "required": true,
   "package": "dev.flanzomc.bbslightfixer.mixin",
   "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "FormEffectsMixin",
+    "BlockFormEffectsMixin",
+    "ColorEffectsMixin",
+    "ColorKeyframeFactoryMixin",
+    "ModelPropertiesLightMixin",
+    "ModelBlockStateMixin",
+    "AbstractBlockStateMixin"
+  ],
   "client": [
-    "FormValuesMixin",
     "PanelMixin",
     "FormDrawMixin",
     "ModelEffectsMixin",

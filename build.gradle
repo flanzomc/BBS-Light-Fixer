@@ -1,5 +1,5 @@
 plugins { id 'fabric-loom' version '1.16.1' }
-version='0.2.0-alpha.4'
+version='0.3.0-alpha.1'
 group='dev.flanzomc.bbslightfixer'
 base { archivesName='bbs-light-fixer' }
 repositories { mavenCentral(); maven { url='https://api.modrinth.com/maven' } }
@@ -9,7 +9,7 @@ dependencies {
  mappings 'net.fabricmc:yarn:1.20.4+build.3:v2'
  modImplementation 'net.fabricmc:fabric-loader:0.16.14'
  modImplementation 'net.fabricmc.fabric-api:fabric-api:0.97.2+1.20.4'
- modImplementation 'maven.modrinth:bbs-fs:qGbGyKHH'
+ modImplementation 'maven.modrinth:ZeRO0IDA:qGbGyKHH'
  modImplementation 'maven.modrinth:lambdynamiclights:mrQ8ZiyU'
  lambBundled 'maven.modrinth:lambdynamiclights:mrQ8ZiyU'
  modRuntimeOnly files(provider { zipTree(configurations.lambBundled.singleFile).matching { include 'META-INF/jars/*.jar' }.files })
