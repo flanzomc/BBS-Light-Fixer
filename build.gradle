@@ -1,5 +1,5 @@
 plugins { id 'fabric-loom' version '1.16.1' }
-version='0.2.0-alpha.5'
+version='0.2.0-alpha.6'
 group='dev.flanzomc.bbslightfixer'
 base { archivesName='bbs-light-fixer' }
 repositories { mavenCentral(); maven { url='https://api.modrinth.com/maven' } }

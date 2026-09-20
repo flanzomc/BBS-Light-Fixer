@@ -23,6 +23,8 @@ import java.util.Deque;
  */
 public final class CmlRenderState
 {
+    private static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
+    private static boolean loggedActiveShader;
     public record Mask(Matrix4f inverse, Vector3f half, float active, float shape) {}
 
     public record State(
@@ -223,6 +225,13 @@ public final class CmlRenderState
         }
 
         State state = current();
+
+        if (state.active && !loggedActiveShader)
+        {
+            loggedActiveShader = true;
+            LOGGER.info("[BBS Light Fixer] CML effect shader is active (paint={}, glow={}, brightness={}, contrast={}, hue={}, saturation={})",
+                state.paint[3], state.glow[3], state.grade[0], state.grade[1], state.grade[2], state.grade[3]);
+        }
 
         set4(shader, "PaintColor", state.paint);
         set4(shader, "GlowingColor", state.glow);

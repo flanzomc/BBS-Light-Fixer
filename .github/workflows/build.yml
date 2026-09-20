@@ -31,6 +31,6 @@ jobs:
           path: client-startup.log
       - uses: actions/upload-artifact@v4
         with:
-          name: bbs-light-fixer-0.2.0-alpha.5
-          path: build/libs/bbs-light-fixer-0.2.0-alpha.5.jar
+          name: bbs-light-fixer-0.2.0-alpha.6
+          path: build/libs/bbs-light-fixer-0.2.0-alpha.6.jar
           if-no-files-found: error
