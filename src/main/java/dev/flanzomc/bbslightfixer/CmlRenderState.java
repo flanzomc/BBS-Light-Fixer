@@ -1,18 +1,26 @@
 package dev.flanzomc.bbslightfixer;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import mchorse.bbs_mod.forms.forms.BlockForm;
 import mchorse.bbs_mod.forms.forms.Form;
 import mchorse.bbs_mod.forms.forms.ModelForm;
+import mchorse.bbs_mod.utils.MathUtils;
 import mchorse.bbs_mod.utils.colors.Color;
-import mchorse.bbs_mod.utils.pose.Transform;
 import net.minecraft.client.gl.GlUniform;
 import net.minecraft.client.gl.ShaderProgram;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+/**
+ * CML effect state translated to BBS FS shader uniforms.
+ *
+ * The mask matrix/half-extents match CML EffectTransformMath:
+ * rotation is degrees, scale lives in half-extents, and model masks are bottom anchored.
+ */
 public final class CmlRenderState
 {
     public record Mask(Matrix4f inverse, Vector3f half, float active, float shape) {}
@@ -33,7 +41,8 @@ public final class CmlRenderState
         boolean active
     ) {}
 
-    private static final Mask NEUTRAL_MASK = new Mask(new Matrix4f(), new Vector3f(1F, 1F, 1F), 0F, 0F);
+    private static final Mask NEUTRAL_MASK =
+        new Mask(new Matrix4f(), new Vector3f(1F, 1F, 1F), 0F, 0F);
 
     public static final State NEUTRAL = new State(
         new float[] {1F, 1F, 1F, 1F},
@@ -46,7 +55,10 @@ public final class CmlRenderState
         false
     );
 
-    private static final ThreadLocal<Deque<State>> STACK = ThreadLocal.withInitial(ArrayDeque::new);
+    private static final ThreadLocal<Deque<State>> STACK =
+        ThreadLocal.withInitial(ArrayDeque::new);
+    private static final ThreadLocal<Boolean> CPU_PRETRANSFORMED =
+        ThreadLocal.withInitial(() -> false);
 
     private CmlRenderState() {}
 
@@ -67,6 +79,11 @@ public final class CmlRenderState
         if (!stack.isEmpty()) stack.pop();
     }
 
+    public static void setCpuPretransformed(boolean value)
+    {
+        CPU_PRETRANSFORMED.set(value);
+    }
+
     public static State capture(Form form, boolean picking)
     {
         if (picking || form == null) return NEUTRAL;
@@ -79,12 +96,18 @@ public final class CmlRenderState
 
         Color paint = values.paintColor.get();
         Color glow = values.glowingColor.get();
-        float baseHalf = form instanceof BlockForm ? 0.5F : 1F;
+        boolean block = form instanceof BlockForm;
 
         return new State(
             new float[] {tint.r, tint.g, tint.b, tint.a},
-            new float[] {paint.r, paint.g, paint.b, clamp(values.paintIntensity.get(), -1F, 1F)},
-            new float[] {glow.r, glow.g, glow.b, finite(values.glowIntensity.get())},
+            new float[] {
+                paint.r, paint.g, paint.b,
+                MathUtils.clamp(finite(values.paintIntensity.get()), -1F, 1F)
+            },
+            new float[] {
+                glow.r, glow.g, glow.b,
+                finite(values.glowIntensity.get())
+            },
             new float[] {
                 finite(values.brightness.get()),
                 finite(values.contrast.get()),
@@ -92,48 +115,61 @@ public final class CmlRenderState
                 finite(values.saturation.get())
             },
             values.glowPaintOnly.get(),
-            mask(values.colorMask, baseHalf),
-            mask(values.paintMask, baseHalf),
-            mask(values.glowMask, baseHalf),
-            mask(values.brightnessMask, baseHalf),
-            mask(values.contrastMask, baseHalf),
-            mask(values.hueMask, baseHalf),
-            mask(values.saturationMask, baseHalf),
+            mask(values.colorMask, block),
+            mask(values.paintMask, block),
+            mask(values.glowMask, block),
+            mask(values.brightnessMask, block),
+            mask(values.contrastMask, block),
+            mask(values.hueMask, block),
+            mask(values.saturationMask, block),
             values.active()
         );
     }
 
-    private static Mask mask(CmlEffectValues.Mask values, float baseHalf)
+    private static Mask mask(CmlEffectValues.Mask values, boolean block)
     {
-        Transform transform = values.transform.get();
-        Matrix4f matrix = new Matrix4f();
+        boolean active = values.active();
 
-        if (transform != null)
+        if (!active)
         {
-            matrix
-                .translate(transform.translate)
-                .translate(values.pivotX.get(), values.pivotY.get(), values.pivotZ.get())
-                .rotateXYZ(transform.rotate.x, transform.rotate.y, transform.rotate.z)
-                .translate(-values.pivotX.get(), -values.pivotY.get(), -values.pivotZ.get());
+            return new Mask(
+                new Matrix4f(),
+                block ? new Vector3f(0.5F, 0.5F, 0.5F) : new Vector3f(1F, 1F, 1F),
+                0F,
+                values.shape.get()
+            );
         }
+
+        Matrix4f matrix = new Matrix4f()
+            .translate(values.offsetX.get(), values.offsetY.get(), values.offsetZ.get())
+            .translate(values.pivotX.get(), values.pivotY.get(), values.pivotZ.get())
+            .rotateXYZ(
+                MathUtils.toRad(values.rotateX.get()),
+                MathUtils.toRad(values.rotateY.get()),
+                MathUtils.toRad(values.rotateZ.get())
+            )
+            .translate(-values.pivotX.get(), -values.pivotY.get(), -values.pivotZ.get());
 
         if (Math.abs(matrix.determinant()) > 1.0e-10F) matrix.invert();
         else matrix.identity();
 
-        float sx = transform == null ? 1F : transform.scale.x;
-        float sy = transform == null ? 1F : transform.scale.y;
-        float sz = transform == null ? 1F : transform.scale.z;
-
-        if (sx == 0F) sx = 0.001F;
-        if (sy == 0F) sy = 0.001F;
-        if (sz == 0F) sz = 0.001F;
+        float sx = zeroSafe(values.scaleX.get());
+        float sy = zeroSafe(values.scaleY.get());
+        float sz = zeroSafe(values.scaleZ.get());
+        float base = block ? 0.5F : 1F;
 
         return new Mask(
             matrix,
-            new Vector3f(baseHalf * sx, baseHalf * sy, baseHalf * sz),
-            values.active() ? 1F : 0F,
+            new Vector3f(base * sx, base * sy, base * sz),
+            1F,
             values.shape.get()
         );
+    }
+
+    private static float zeroSafe(float value)
+    {
+        if (!Float.isFinite(value)) return 1F;
+        return value == 0F ? 0.001F : value;
     }
 
     private static float finite(float value)
@@ -141,14 +177,50 @@ public final class CmlRenderState
         return Float.isFinite(value) ? value : 0F;
     }
 
-    private static float clamp(float value, float min, float max)
-    {
-        return Math.max(min, Math.min(max, finite(value)));
-    }
-
     public static void upload(ShaderProgram shader)
     {
         if (shader != CmlShaders.model && shader != CmlShaders.block) return;
+
+        /*
+         * CML has a dedicated CPU-pretransformed path. FS 2.5.2 does not, so when a
+         * CPU/shape-key model uses the port shader we recreate the same state here.
+         */
+        if (CPU_PRETRANSFORMED.get())
+        {
+            for (int i = 0; i < 12; i++)
+            {
+                shader.addSampler("Sampler" + i, RenderSystem.getShaderTexture(i));
+            }
+
+            if (shader.projectionMat != null)
+                shader.projectionMat.set(RenderSystem.getProjectionMatrix());
+
+            if (shader.modelViewMat != null)
+                shader.modelViewMat.set(RenderSystem.getModelViewMatrix());
+
+            GlUniform normal = shader.getUniform("NormalMat");
+            if (normal != null) normal.set(new Matrix3f());
+
+            if (shader.viewRotationMat != null)
+                shader.viewRotationMat.set(RenderSystem.getInverseViewRotationMatrix());
+
+            if (shader.fogStart != null)
+                shader.fogStart.set(RenderSystem.getShaderFogStart());
+
+            if (shader.fogEnd != null)
+                shader.fogEnd.set(RenderSystem.getShaderFogEnd());
+
+            if (shader.fogColor != null)
+                shader.fogColor.set(RenderSystem.getShaderFogColor());
+
+            if (shader.fogShape != null)
+                shader.fogShape.set(RenderSystem.getShaderFogShape().getId());
+
+            if (shader.colorModulator != null)
+                shader.colorModulator.set(1F, 1F, 1F, 1F);
+
+            RenderSystem.setupShaderLights(shader);
+        }
 
         State state = current();
 

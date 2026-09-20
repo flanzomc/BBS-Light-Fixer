@@ -9,7 +9,6 @@ import mchorse.bbs_mod.ui.framework.elements.UISection;
 import mchorse.bbs_mod.ui.framework.elements.buttons.UIIcon;
 import mchorse.bbs_mod.ui.framework.elements.buttons.UIToggle;
 import mchorse.bbs_mod.ui.framework.elements.input.UIColor;
-import mchorse.bbs_mod.ui.framework.elements.input.UISimpleTransform;
 import mchorse.bbs_mod.ui.framework.elements.input.UITrackpad;
 import mchorse.bbs_mod.ui.utils.UI;
 import mchorse.bbs_mod.ui.utils.icons.Icons;
@@ -24,7 +23,7 @@ public final class CmlEffectsPanel extends UIElement
         this.values = CmlEffectValues.of(form);
         this.column(5).vertical().stretch();
 
-        UISection shading = new UISection(IKey.constant("CML Color / Glow"));
+        UISection shading = new UISection(IKey.constant("Color extras"));
 
         UIColor glowColor = new UIColor(color ->
         {
@@ -34,6 +33,7 @@ public final class CmlEffectsPanel extends UIElement
         glowColor.setColor(this.values.glowingColor.get().getRGBColor());
 
         UITrackpad glow = number(this.values.glowIntensity, false);
+        glow.tooltip(IKey.constant("Glow intensity"));
 
         UIColor paintColor = new UIColor(color ->
         {
@@ -43,6 +43,7 @@ public final class CmlEffectsPanel extends UIElement
         paintColor.setColor(this.values.paintColor.get().getRGBColor());
 
         UITrackpad paint = number(this.values.paintIntensity, false).limit(-1D, 1D);
+        paint.tooltip(IKey.constant("Paint intensity"));
 
         UIToggle paintOnly = new UIToggle(
             IKey.constant("Glow only on Paint"),
@@ -79,15 +80,24 @@ public final class CmlEffectsPanel extends UIElement
         if (form instanceof BlockForm)
         {
             UISection block = new UISection(IKey.constant("Block"));
-            UIToggle light = new UIToggle(IKey.constant("Light"), this.values.emitLight.get(), toggle -> this.values.emitLight.set(toggle.getValue()));
+            UIToggle light = new UIToggle(
+                IKey.constant("Light"),
+                this.values.emitLight.get(),
+                toggle -> this.values.emitLight.set(toggle.getValue())
+            );
 
-            UITrackpad intensity = new UITrackpad(value -> this.values.lightIntensity.set(value.intValue())).integer().limit(0D, 15D);
+            UITrackpad intensity = new UITrackpad(value -> this.values.lightIntensity.set(value.intValue()))
+                .integer().limit(0D, 15D);
             intensity.setValue(this.values.lightIntensity.get());
 
-            UITrackpad breaking = new UITrackpad(value -> this.values.breaking.set(value.intValue())).integer().limit(0D, 10D);
+            UITrackpad breaking = new UITrackpad(value -> this.values.breaking.set(value.intValue()))
+                .integer().limit(0D, 10D);
             breaking.setValue(this.values.breaking.get());
 
-            block.fields.add(UI.row(light, intensity), UI.labelRow(IKey.constant("Breaking"), breaking));
+            block.fields.add(
+                UI.row(light, intensity),
+                UI.labelRow(IKey.constant("Breaking"), breaking)
+            );
             this.add(block);
         }
     }
@@ -113,38 +123,53 @@ public final class CmlEffectsPanel extends UIElement
         UIElement host = UI.column();
         UISection section = new UISection(IKey.constant("Transform"));
 
-        UITrackpad shape = new UITrackpad(value -> mask.shape.set(value.intValue())).integer().limit(0D, 2D);
+        UITrackpad shape = new UITrackpad(value -> mask.shape.set(value.intValue()))
+            .integer().limit(0D, 2D);
         shape.setValue(mask.shape.get());
         shape.tooltip(IKey.constant("0 Box, 1 Circle, 2 Triangle"));
 
-        UISimpleTransform transform = new UISimpleTransform(() -> {});
-        transform.setValue(mask.transform);
+        UITrackpad ox = track(mask.offsetX, 0.05D);
+        UITrackpad oy = track(mask.offsetY, 0.05D);
+        UITrackpad oz = track(mask.offsetZ, 0.05D);
 
-        UITrackpad pivotX = new UITrackpad(value -> mask.pivotX.set(value.floatValue()));
-        UITrackpad pivotY = new UITrackpad(value -> mask.pivotY.set(value.floatValue()));
-        UITrackpad pivotZ = new UITrackpad(value -> mask.pivotZ.set(value.floatValue()));
+        UITrackpad sx = track(mask.scaleX, 0.05D);
+        UITrackpad sy = track(mask.scaleY, 0.05D);
+        UITrackpad sz = track(mask.scaleZ, 0.05D);
 
-        pivotX.setValue(mask.pivotX.get());
-        pivotY.setValue(mask.pivotY.get());
-        pivotZ.setValue(mask.pivotZ.get());
+        UITrackpad rx = track(mask.rotateX, 1D);
+        UITrackpad ry = track(mask.rotateY, 1D);
+        UITrackpad rz = track(mask.rotateZ, 1D);
+
+        UITrackpad px = track(mask.pivotX, 0.05D);
+        UITrackpad py = track(mask.pivotY, 0.05D);
+        UITrackpad pz = track(mask.pivotZ, 0.05D);
 
         section.fields.add(
             UI.labelRow(IKey.constant("Shape"), shape),
-            transform,
-            UI.label(IKey.constant("Pivot")),
-            UI.row(pivotX, pivotY, pivotZ)
+            UI.label(IKey.constant("Offset")), UI.row(ox, oy, oz),
+            UI.label(IKey.constant("Scale")), UI.row(sx, sy, sz),
+            UI.label(IKey.constant("Rotate")), UI.row(rx, ry, rz),
+            UI.label(IKey.constant("Pivot")), UI.row(px, py, pz)
         );
 
         UIIcon button = new UIIcon(Icons.SCALE, ignored ->
         {
             if (section.getParent() != null) section.removeFromParent();
             else host.add(section);
-
             CmlEffectsPanel.this.resize();
         });
 
-        button.tooltip(IKey.constant("Transform"));
+        button.tooltip(IKey.constant("Effect transform"));
         host.add(UI.row(field, button));
         return host;
+    }
+
+    private UITrackpad track(ValueFloat value, double step)
+    {
+        UITrackpad track = new UITrackpad(number -> value.set(number.floatValue()))
+            .increment(step)
+            .values(step * 2D, step, step * 5D);
+        track.setValue(value.get());
+        return track;
     }
 }
