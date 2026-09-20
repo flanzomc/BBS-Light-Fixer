@@ -32,7 +32,7 @@ public final class FormBridge {
             if(!Boolean.TRUE.equals(field(context,"ui"))) {
                 MatrixStack stack=(MatrixStack)field(context,"stack");
                 ModelBlockAnchor.Position anchored=ModelBlockAnchor.resolve(stack.peek().getPositionMatrix());
-                if(anchored!=null) Lights.capture(form,field(context,"entity"),anchored.x(),anchored.y(),anchored.z(),spec.level());
+                if(anchored!=null) Lights.capture(form,ModelBlockAnchor.owner(),anchored.x(),anchored.y(),anchored.z(),spec.level());
                 else Lights.capture(form,field(context,"entity"),(MatrixStack)field(context,"world"),spec.level());
             }
         } catch(ReflectiveOperationException | RuntimeException e) {

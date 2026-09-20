@@ -1,5 +1,5 @@
 plugins { id 'fabric-loom' version '1.16.1' }
-version = '0.1.0-alpha.4'
+version = '0.1.0-alpha.5'
 group = 'dev.bbslight'
 base { archivesName = 'bbs-light-fixer' }
 repositories { mavenCentral() }

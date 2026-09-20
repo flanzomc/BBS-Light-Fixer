@@ -2,6 +2,6 @@
  "required": true,
  "package": "dev.bbslight.mixin",
  "compatibilityLevel": "JAVA_17",
- "client": ["FormRendererMixin", "WorldRendererMixin", "BlockRenderManagerMixin", "ModelBlockRendererMixin", "FormBufferMixin"],
+ "client": ["FormRendererMixin", "WorldRendererMixin", "BlockRenderManagerMixin", "ModelBlockRendererMixin", "FormBufferMixin", "ChunkLightProviderMixin"],
  "injectors": {"defaultRequire": 1}
 }

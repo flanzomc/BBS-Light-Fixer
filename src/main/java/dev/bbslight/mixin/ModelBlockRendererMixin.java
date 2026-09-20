@@ -1,6 +1,7 @@
 package dev.bbslight.mixin;
 
 import dev.bbslight.ModelBlockAnchor;
+import dev.bbslight.Lights;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
@@ -17,7 +18,8 @@ abstract class ModelBlockRendererMixin {
     private void bbsLight$anchor(@Coerce Object entity, float delta, MatrixStack matrices,
                                VertexConsumerProvider consumers, int light, int overlay, CallbackInfo ci) {
         BlockPos p = ((BlockEntity) entity).getPos();
-        ModelBlockAnchor.begin(matrices.peek().getPositionMatrix(), p.getX(), p.getY(), p.getZ());
+        Lights.beginPlaced(entity);
+        ModelBlockAnchor.begin(matrices.peek().getPositionMatrix(), p.getX(), p.getY(), p.getZ(), entity);
     }
     @Inject(method="render", at=@At("RETURN"), remap=false)
     private void bbsLight$end(@Coerce Object entity, float delta, MatrixStack matrices,

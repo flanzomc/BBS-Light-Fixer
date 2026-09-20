@@ -1,4 +1,6 @@
-# BBS Light Fixer — experimental alpha.4
+# BBS Light Fixer — experimental alpha.5
+
+Alpha.5 adds BBS lights to client-world block-light provider reads used by terrain lighting, including direct reads outside the packed-light renderer helper. Ground and walls use distance falloff. Placed model-block sources remain active after being seen once, even when the model goes off-screen; re-rendering an edited model replaces its sources, and removal or chunk unload clears them. The server world, skylight storage, and saved blocks are untouched.
 
 Alpha.4 anchors placed model-block lights to the real block renderer instead of BBS's zero-position placeholder entity. Local form and animated bone transforms are retained. Tagged block forms use an immediate cutout emissive pass so BBS's translucent queue cannot defer their glow draw. Terrain rebuilds schedule each affected section once instead of walking every block in it.
 
@@ -27,7 +29,7 @@ Fullbright tagged forms and client-side vanilla lightmap illumination for terrai
 
 - No bloom, colored lighting, shadows, or per-pixel `_e.png` masks yet. Fullbright is not bloom.
 - Light can pass through walls; this is distance-based visual illumination, not Minecraft's server light propagation.
-- Sources are discovered while BBS renders their forms. Off-screen/culled sources may stop emitting. Terrain changes have rebuild latency.
+- Sources are initially discovered while BBS renders their forms. Placed model-block lights remain active off-screen after discovery; culled actor/body-part lights may stop emitting. Off-screen animated model-block positions update when rendered again. Terrain changes have rebuild latency.
 - Sodium and shader-pack pipelines are not supported/verified by this first vanilla-renderer build.
 - GUI thumbnails are not world light sources. Fullbright applies where BBS calls the common form renderer; standalone preview paths may differ.
 - No in-game client test is possible in CI; compilation/unit tests are not proof of visual correctness. Test in a copy of a scene first.
