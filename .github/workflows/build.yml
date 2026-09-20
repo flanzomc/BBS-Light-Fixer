@@ -15,6 +15,20 @@ jobs:
         with:
           gradle-version: '9.4.0'
       - run: gradle build --console=plain
+      - name: Client startup smoke test
+        run: |
+          set +e
+          timeout 180s xvfb-run -a gradle runClient --console=plain > client-startup.log 2>&1
+          result=$?
+          cat client-startup.log
+          if [ "$result" != 124 ]; then exit 1; fi
+          if grep -E 'MixinApplyError|InvalidInjectionException|InjectionError|Failed to load shader|Could not compile shader|Unhandled game exception' client-startup.log; then exit 1; fi
+          grep -E 'Created:.*textures/atlas' client-startup.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: client-startup-log
+          path: client-startup.log
       - uses: actions/upload-artifact@v4
         with:
           name: bbs-light-fixer-0.2.0-alpha.1

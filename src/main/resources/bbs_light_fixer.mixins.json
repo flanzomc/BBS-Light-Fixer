@@ -11,7 +11,8 @@
     "ShaderUniformMixin",
     "ModelBlockMixin",
     "DeferredEffectsMixin",
-    "BreakingMixin"
+    "BreakingMixin",
+    "ModelEffectsMixin"
   ],
   "injectors": {
     "defaultRequire": 1

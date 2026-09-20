@@ -8,7 +8,8 @@ import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.joml.*;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import java.util.*;
 
 /** CML block emission semantics; Lamb owns world terrain lightmap integration. */

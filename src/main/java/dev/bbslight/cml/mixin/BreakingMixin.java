@@ -18,7 +18,7 @@ abstract class BreakingMixin extends FormRenderer<BlockForm> {
  private void damage(MatrixStack matrices,VertexConsumerProvider consumers,int light,int overlay,boolean picking,CallbackInfo ci){
   int stage=EffectValues.of(form).breaking.get();var mc=MinecraftClient.getInstance();
   if(picking||stage==0||mc.world==null)return;
-  VertexConsumer out=new OverlayVertexConsumer(consumers.getBuffer(ModelLoader.BLOCK_DESTRUCTION_RENDER_LAYERS.get(stage-1)),matrices.peek(),1F);
+  VertexConsumer out=new OverlayVertexConsumer(consumers.getBuffer(ModelLoader.BLOCK_DESTRUCTION_RENDER_LAYERS.get(stage-1)),matrices.peek().getPositionMatrix(),matrices.peek().getNormalMatrix(),1F);
   mc.getBlockRenderManager().renderDamage(form.blockState.get(),BlockPos.ORIGIN,mc.world,matrices,out);
  }
 }
