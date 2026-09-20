@@ -5,7 +5,7 @@ import mchorse.bbs_mod.forms.forms.BlockForm;
 import mchorse.bbs_mod.forms.renderers.BlockFormRenderer;
 import mchorse.bbs_mod.forms.renderers.FormRenderer;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.ModelLoader;
+import net.minecraft.client.render.model.ModelLoader;
 import net.minecraft.client.render.OverlayVertexConsumer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
