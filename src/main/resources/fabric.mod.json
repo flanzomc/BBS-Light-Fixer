@@ -1,8 +1,21 @@
 {
- "schemaVersion":1,"id":"bbs_light_fixer","version":"${version}","name":"BBS Light Fixer",
- "description":"CML form lighting and color effects adapted for BBS FS.","environment":"client",
- "entrypoints":{"client":["dev.bbslight.cml.LightPort"]},
- "mixins":["bbs_light_fixer.mixins.json"],
- "depends":{"fabricloader":">=0.16.14","minecraft":"~1.20.4","java":">=17","fabric-api":"*","bbs":">=2.5.2-1.20.4","lambdynlights":"~2.3.4"},
- "license":"MIT"
+  "schemaVersion": 1,
+  "id": "bbs_light_fixer",
+  "version": "${version}",
+  "name": "BBS Light Fixer",
+  "description": "Clean BBS-CML form effects and block-light port for BBS FS.",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["dev.flanzomc.bbslightfixer.BbsLightFixer"]
+  },
+  "mixins": ["bbs_light_fixer.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.16.14",
+    "minecraft": "~1.20.4",
+    "java": ">=17",
+    "fabric-api": "*",
+    "bbs": ">=2.5.2-1.20.4",
+    "lambdynlights": "~2.3.4"
+  },
+  "license": "MIT"
 }

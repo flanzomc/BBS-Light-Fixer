@@ -1,19 +1,16 @@
 {
   "required": true,
-  "package": "dev.bbslight.cml.mixin",
+  "package": "dev.flanzomc.bbslightfixer.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "FormDataMixin",
+    "FormValuesMixin",
     "PanelMixin",
     "FormDrawMixin",
-    "ModelShaderMixin",
+    "ModelEffectsMixin",
     "BlockLayerMixin",
     "ShaderUniformMixin",
     "ModelBlockMixin",
-    "QueueCaptureMixin",
-    "DeferredEffectsMixin",
-    "BreakingMixin",
-    "ModelEffectsMixin"
+    "BlockBreakingMixin"
   ],
   "injectors": {
     "defaultRequire": 1

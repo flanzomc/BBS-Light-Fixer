@@ -1,17 +1,20 @@
-# BBS Light Fixer — CML feature port
+# BBS Light Fixer — clean BBS-CML port
 
-Fabric 1.20.4, BBS FS 2.5.2. This replaces the old display-name tags and commands with saved form properties.
+Fabric 1.20.4 / BBS FS 2.5.2.
 
-Requires Fabric API and LambDynamicLights **2.3.4+1.20.4** in the mods folder. Enable dynamic lighting in LambDynamicLights settings. No external shader pack is required.
+This implementation was rebuilt from scratch around the open-source BBS-CML effect implementation instead of continuing the previous experimental shader/mask code.
 
-Model and Block form editors gain Color extras (glow and paint), Color grade (brightness, contrast, saturation and hue), and per-channel effect transforms. Block forms gain emission enable/intensity and breaking stage (0 off, 1–10 cracks). Block light follows CML: capped by the underlying block luminance, so a torch can emit but ordinary stone cannot. Glow adjusts the surface; it is not bloom or colored world lighting. World light uses LambDynamicLights' radius and terrain update behavior.
+Reference: BBS-CML commit `06f0e53172aadb1fd2a201b03226c9cb59f135e5`.
 
-The values are stored under cml_effects in FS forms. They are not a CML form file converter. Old name tags no longer configure this replacement.
+Ported behavior:
+- Glow color + intensity
+- Paint color + intensity, including negative darkening
+- Color Grade order: brightness, contrast, saturation, hue
+- Independent transform masks
+- Box / Circle / Triangle mask shapes
+- Block breaking stage
+- Block-form dynamic emission capped by the block's own luminance
 
-## Source and attribution
+The BBS-CML model fragment shader is used directly under its MIT license. Only the vertex/fog contract and FS integration points are adapted for Minecraft 1.20.4/BBS FS.
 
-Color processing and effect-mask formulas are adapted from [BBS-CML](https://github.com/ElGatoPro300/BBS-CML), commit 06f0e53172aadb1fd2a201b03226c9cb59f135e5, MIT, Copyright 2025 McHorse / Copyright 2026 ElGatoPro300. Full license ships in META-INF/licenses/BBS-CML.txt. World lighting is provided by LambDynamicLights, not bundled/copied.
-
-## Validation and scope
-
-Experimental port. A real Minecraft client startup check verifies mixin loading, shader compilation and uniforms, native panel layout, and form serialization. This does not replace visual testing in a scene. Current render support is BBS model geometry (VAO and non-VAO) and ordinary baked Block forms with the vanilla renderer. Fluid/block-entity renderers and Iris shader-pack overlays need separate integration. Future FS versions are not automatically guaranteed compatible with these mixins.
+Iris world rendering intentionally remains on the original BBS/Iris shader path instead of forcing the custom shader and making models disappear.
