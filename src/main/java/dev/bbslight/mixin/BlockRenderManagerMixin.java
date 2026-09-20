@@ -1,6 +1,7 @@
 package dev.bbslight.mixin;
 
 import dev.bbslight.FormBridge;
+import dev.bbslight.EmissiveLayers;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.client.texture.SpriteAtlasTexture;
@@ -14,6 +15,6 @@ abstract class BlockRenderManagerMixin {
     @ModifyArg(method="renderBlockAsEntity", at=@At(value="INVOKE",
         target="Lnet/minecraft/client/render/VertexConsumerProvider;getBuffer(Lnet/minecraft/client/render/RenderLayer;)Lnet/minecraft/client/render/VertexConsumer;"), index=0)
     private RenderLayer bbsLight$emissive(RenderLayer original) {
-        return FormBridge.glowing() ? RenderLayer.getEntityTranslucentEmissive(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE) : original;
+        return FormBridge.glowing() ? EmissiveLayers.BLOCK : original;
     }
 }

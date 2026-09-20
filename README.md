@@ -1,4 +1,8 @@
-# BBS Light Fixer — experimental first build
+# BBS Light Fixer — experimental alpha.4
+
+Alpha.4 anchors placed model-block lights to the real block renderer instead of BBS's zero-position placeholder entity. Local form and animated bone transforms are retained. Tagged block forms use an immediate cutout emissive pass so BBS's translucent queue cannot defer their glow draw. Terrain rebuilds schedule each affected section once instead of walking every block in it.
+
+Replace the older addon JAR, then use `Torch [light=15] [glow]` in the form's display name. `/bbslight` reports the first source's world coordinates for comparison with the placed model. This fix targets vanilla rendering on Fabric 1.20.4; compilation and coordinate regression tests do not replace an in-game visual test.
 
 Fabric **1.20.4**, BBS FS **2.5.2** API baseline. Requires Fabric API. No shader pack or Iris is required. Newer BBS FS releases are not yet runtime-verified. This is NOT a CML build.
 

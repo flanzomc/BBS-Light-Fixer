@@ -39,8 +39,12 @@ public final class Lights {
         if (!collecting || stack == null || level == 0 || frame.size() >= MAX_LIGHTS) return;
         // BBS context.world already includes entity, form and animated parent-bone transforms.
         Vector3f p = stack.peek().getPositionMatrix().getTranslation(new Vector3f());
-        if (!Float.isFinite(p.x) || !Float.isFinite(p.y) || !Float.isFinite(p.z) || camera.squaredDistanceTo(p.x,p.y,p.z) > 128*128) return;
-        frame.put(new Key(form, entity), new Source(p.x,p.y,p.z,level));
+        capture(form, entity, p.x, p.y, p.z, level);
+    }
+    public static void capture(Object form, Object entity, double x, double y, double z, int level) {
+        if (!collecting || level == 0 || frame.size() >= MAX_LIGHTS) return;
+        if (!Double.isFinite(x) || !Double.isFinite(y) || !Double.isFinite(z) || camera.squaredDistanceTo(x,y,z) > 128*128) return;
+        frame.put(new Key(form, entity), new Source(x,y,z,level));
     }
     public static void end() { collecting = false; frameNumber++; }
     public static String diagnostic() {
@@ -69,7 +73,9 @@ public final class Lights {
         var it=dirty.iterator();
         for(int n=0; n<32 && it.hasNext(); n++) {
             Section s=it.next(); it.remove();
-            client.worldRenderer.scheduleBlockRenders(s.x*16,s.y*16,s.z*16,s.x*16+15,s.y*16+15,s.z*16+15);
+            // scheduleBlockRender takes section coordinates. The range overload walks
+            // every block, redundantly scheduling the same section thousands of times.
+            client.worldRenderer.scheduleBlockRender(s.x,s.y,s.z);
         }
     }
     private static boolean changed(Source a, Source b) {

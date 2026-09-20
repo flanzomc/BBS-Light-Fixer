@@ -29,8 +29,12 @@ public final class FormBridge {
                 lookup(context.getClass(),"light").setInt(context,0x00f000f0);
                 GLOW.get().pop(); GLOW.get().push(true);
             }
-            if(!Boolean.TRUE.equals(field(context,"ui")))
-                Lights.capture(form,field(context,"entity"),(MatrixStack)field(context,"world"),spec.level());
+            if(!Boolean.TRUE.equals(field(context,"ui"))) {
+                MatrixStack stack=(MatrixStack)field(context,"stack");
+                ModelBlockAnchor.Position anchored=ModelBlockAnchor.resolve(stack.peek().getPositionMatrix());
+                if(anchored!=null) Lights.capture(form,field(context,"entity"),anchored.x(),anchored.y(),anchored.z(),spec.level());
+                else Lights.capture(form,field(context,"entity"),(MatrixStack)field(context,"world"),spec.level());
+            }
         } catch(ReflectiveOperationException | RuntimeException e) {
             if(!warned) { warned=true; LoggerFactory.getLogger("BBS Light Fixer").warn("BBS form lighting hook is incompatible with this build",e); }
         }
