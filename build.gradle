@@ -3,6 +3,7 @@ version='0.2.0-alpha.1'
 group='dev.bbslight'
 base { archivesName='bbs-light-fixer' }
 repositories { mavenCentral(); maven { url='https://api.modrinth.com/maven' } }
+configurations { lambBundled }
 dependencies {
  minecraft 'com.mojang:minecraft:1.20.4'
  mappings 'net.fabricmc:yarn:1.20.4+build.3:v2'
@@ -10,6 +11,9 @@ dependencies {
  modImplementation 'net.fabricmc.fabric-api:fabric-api:0.97.2+1.20.4'
  modImplementation 'maven.modrinth:bbs-fs:qGbGyKHH'
  modImplementation 'maven.modrinth:lambdynamiclights:mrQ8ZiyU'
+ // Loom does not discover nested mods in development; the release Lamb JAR bundles both.
+ lambBundled 'maven.modrinth:lambdynamiclights:mrQ8ZiyU'
+ modRuntimeOnly files(provider { zipTree(configurations.lambBundled.singleFile).matching { include 'META-INF/jars/*.jar' }.files })
  testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
  testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.2'
 }

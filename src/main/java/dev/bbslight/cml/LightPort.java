@@ -6,7 +6,7 @@ public final class LightPort implements ClientModInitializer {
   PortShaders.register();
   ClientTickEvents.END_CLIENT_TICK.register(client->{
    PortLights.tick();
-   if(Boolean.getBoolean("bbsLight.selfTest") && client.currentScreen instanceof net.minecraft.client.gui.screen.TitleScreen && PortShaders.model!=null) {
+   if(Boolean.getBoolean("bbsLight.selfTest") && client.currentScreen!=null && client.getOverlay()==null && PortShaders.model!=null) {
     StartupCheck.run();client.scheduleStop();
    }
   });

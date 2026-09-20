@@ -50,7 +50,7 @@ public final class EffectsPanel extends UIElement {
         shape.setValue(mask.shape.get());shape.tooltip(IKey.constant("0: box, 1: sphere, 2: triangle"));
         UISimpleTransform editor=new UISimpleTransform(()->{});editor.setValue(mask.transform);
         transform.fields.add(active,shape,editor);
-        UIIcon button=new UIIcon(Icons.BLOCK,b->{if(transform.getParent()!=null)transform.removeFromParent();else column.add(transform);column.resize();});
+        UIIcon button=new UIIcon(Icons.BLOCK,b->{if(transform.getParent()!=null)transform.removeFromParent();else column.add(transform);if(EffectsPanel.this.getParent()!=null)EffectsPanel.this.getParent().resize();else EffectsPanel.this.resize();});
         button.tooltip(IKey.constant("Effect transform"));
         column.add(UI.row(control,button));return column;
     }

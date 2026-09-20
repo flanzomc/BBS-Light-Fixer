@@ -38,6 +38,7 @@ public final class PortLights {
   Source s=map.get(form);
   if(s==null) { s=new Source(client.world,owner,block);map.put(form,s);s.x=p.x;s.y=p.y;s.z=p.z;s.setDynamicLightEnabled(true); }
   s.x=p.x;s.y=p.y;s.z=p.z;s.seen=clock;
+  if(!LambDynLights.get().containsLightSource(s))s.setDynamicLightEnabled(true);
  }
  public static void tick() {
   clock++;World world=MinecraftClient.getInstance().world;

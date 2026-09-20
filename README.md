@@ -14,4 +14,4 @@ Color processing and effect-mask formulas are adapted from [BBS-CML](https://git
 
 ## Validation and scope
 
-Experimental port. Compile/build checks do not replace Minecraft visual testing. Current render support is BBS model VAO geometry and ordinary baked Block forms with the vanilla renderer. Fluid/block-entity renderers and Iris shader-pack overlays need separate integration. Future FS versions are not automatically guaranteed compatible with these mixins.
+Experimental port. Compile/build checks do not replace Minecraft visual testing. Current render support is BBS model geometry (VAO and non-VAO) and ordinary baked Block forms with the vanilla renderer. Fluid/block-entity renderers and Iris shader-pack overlays need separate integration. Future FS versions are not automatically guaranteed compatible with these mixins.

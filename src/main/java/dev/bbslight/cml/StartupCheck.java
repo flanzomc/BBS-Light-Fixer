@@ -8,6 +8,8 @@ final class StartupCheck {
    BlockForm a=new BlockForm(),b=new BlockForm();
    EffectValues.of(a).glow.set(.4F);EffectValues.of(a).brightness.set(.25F);EffectValues.of(a).level.set(7);EffectValues.of(a).masks[0].enabled.set(true);
    b.fromData(a.toData());
+   EffectsPanel panel=new EffectsPanel(a);panel.w(240);panel.resize();
+   if(panel.area.h<150)throw new AssertionError("Effects panel collapsed layout: "+panel.area.h);
    if(EffectValues.of(b).glow.get()!=.4F || EffectValues.of(b).brightness.get()!=.25F || EffectValues.of(b).level.get()!=7 || !EffectValues.of(b).masks[0].enabled.get())throw new AssertionError("Effect values lost on form round trip");
    for(var shader:new net.minecraft.client.gl.ShaderProgram[]{PortShaders.model,PortShaders.block}) {
     if(shader==null)throw new AssertionError("Shader did not load");
