@@ -16,6 +16,7 @@ public final class EffectScope {
     public static State current() { return STACK.get().isEmpty()?NEUTRAL:STACK.get().peek(); }
     public static void push(State state) { STACK.get().push(state); }
     public static void pop() { if(!STACK.get().isEmpty())STACK.get().pop(); }
+    public static void replaceCurrent(State state) { if(!STACK.get().isEmpty()) { pop();push(state); } }
     public static State capture(Form form,MatrixStack stack,boolean picking) {
         if(picking)return NEUTRAL;
         EffectValues v=EffectValues.of(form);
