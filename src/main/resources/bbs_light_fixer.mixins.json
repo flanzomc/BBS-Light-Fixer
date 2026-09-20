@@ -10,6 +10,7 @@
     "BlockLayerMixin",
     "ShaderUniformMixin",
     "ModelBlockMixin",
+    "QueueCaptureMixin",
     "DeferredEffectsMixin",
     "BreakingMixin",
     "ModelEffectsMixin"
